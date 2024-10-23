@@ -34,3 +34,25 @@ app.use('/api/reviews', reviewsRoutes); // Маршрут для отзывов
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Job Application API',
+            version: '1.0.0',
+            description: 'API for managing job applications and listings',
+        },
+        servers: [
+            {
+                url: 'http://localhost:5000',
+            },
+        ],
+    },
+    apis: ['./server.js'], // Укажите путь к файлам с описанием API
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
