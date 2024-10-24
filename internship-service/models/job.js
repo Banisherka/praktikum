@@ -1,11 +1,21 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const jobSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  company: { type: String, required: true },
-  status: { type: String, enum: ['open', 'closed'], default: 'open' },
-  createdDate: { type: Date, default: Date.now },
+const Job = sequelize.define('Job', {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.ENUM('open', 'closed'),
+        allowNull: false,
+    },
+}, {
+    timestamps: true,
 });
 
-module.exports = mongoose.model('Job', jobSchema);
+module.exports = Job;

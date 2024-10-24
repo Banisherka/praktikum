@@ -1,8 +1,17 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const coverLetterSchema = new mongoose.Schema({
-  applicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Application', required: true },
-  text: { type: String, required: true },
+const CoverLetter = sequelize.define('CoverLetter', {
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+}, {
+    timestamps: true,
 });
 
-module.exports = mongoose.model('CoverLetter', coverLetterSchema);
+module.exports = CoverLetter;

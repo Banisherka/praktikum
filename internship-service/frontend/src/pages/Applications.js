@@ -16,7 +16,7 @@ function Applications() {
             <ul className="list-group">
                 {applications.map(application => (
                     <li key={application.id} className="list-group-item">
-                        <h5>{application.jobTitle}</h5>
+                        <h5>{application.jobId}</h5>
                         <p>Status: {application.status}</p>
                     </li>
                 ))}

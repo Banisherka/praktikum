@@ -15,8 +15,8 @@ function Jobs() {
         <div>
             <h2>Available Jobs and Internships</h2>
             <JobList jobs={jobs} />
-            </div>
-            );
-        }
-        
-        export default Jobs;
+        </div>
+    );
+}
+
+export default Jobs;

@@ -6,8 +6,14 @@ function ApplicationForm({ jobId }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Отправка данных на сервер
-        const applicationData = { resume, coverLetter, jobId };
+
+        const applicationData = {
+            jobId,
+            userId: 1, // Предположим, что ID пользователя будет получен из контекста или состояния
+            resumeId: resume,
+            coverLetterId: coverLetter,
+        };
+
         fetch('http://localhost:5000/api/applications', {
             method: 'POST',
             headers: {
@@ -17,7 +23,6 @@ function ApplicationForm({ jobId }) {
         })
         .then(response => response.json())
         .then(data => {
-            // Обработка ответа
             console.log('Application submitted:', data);
         })
         .catch(error => console.error('Error submitting application:', error));
@@ -27,11 +32,22 @@ function ApplicationForm({ jobId }) {
         <form onSubmit={handleSubmit}>
             <div className="form-group">
                 <label htmlFor="resume">Upload Resume</label>
-                <input type="file" className="form-control" id="resume" onChange={(e) => setResume(e.target.files[0])} required />
+                <input 
+                    type="file" 
+                    className="form-control" 
+                    id="resume" 
+                    onChange={(e) => setResume(e.target.files[0])} 
+                    required 
+                />
             </div>
             <div className="form-group">
                 <label htmlFor="coverLetter">Cover Letter</label>
-                <textarea className="form-control" id="coverLetter" onChange={(e) => setCoverLetter(e.target.value)} required></textarea>
+                <textarea 
+                    className="form-control" 
+                    id="coverLetter" 
+                    onChange={(e) => setCoverLetter(e.target.value)} 
+                    required
+                ></textarea>
             </div>
             <button type="submit" className="btn btn-success">Submit Application</button>
         </form>

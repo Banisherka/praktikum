@@ -1,56 +1,62 @@
 const express = require('express');
-const Application = require('../internship-service/models/Application');
-const Resume = require('../internship-service/models/Resume');
-const CoverLetter = require('../internship-service/models/CoverLetter');
+const Application = require('../models/Application');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
+const { body, validationResult } = require('express-validator');
 
-// Настройка загрузки файлов
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/resumes/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Добавляем дату для уникальности
-  },
+// Валидация данных
+const applicationValidationRules = [
+    body('jobId').isInt().withMessage('Job ID must be an integer'),
+    body('userId').isInt().withMessage('User  ID must be an integer'),
+    body('resumeId').isInt().withMessage('Resume ID must be an integer'),
+    body('coverLetterId').isInt().withMessage('Cover Letter ID must be an integer'),
+];
+
+// Получение списка заявок
+router.get('/', async (req, res) => {
+    const applications = await Application.findAll();
+    res.json(applications);
 });
 
-const upload = multer({ storage });
-
-// Подача заявки с загрузкой резюме и сопроводительного письма
-router.post('/', upload.single('resume'), async (req, res) => {
-  const application = new Application({
-    userId: req.body.userId,
-    jobId: req.body.jobId,
-  });
-
-  await application.save();
-
-  // Сохранение резюме
-  const resume = new Resume({
-    userId: req.body.userId,
-    filePath: req.file.path, // Путь к загруженному резюме
-  });
-
-  await resume.save();
-
-  // Если сопроводительное письмо предоставлено, сохраним его
-  if (req.body.coverLetter) {
-    const coverLetter = new CoverLetter({
-      applicationId: application._id,
-      text: req.body.coverLetter,
-    });
-    await coverLetter.save();
-  }
-
-  res.status(201).json(application);
+// Создание новой заявки
+router.post('/', applicationValidationRules, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const application = await Application.create(req.body);
+    res.json(application);
 });
 
-// Получение всех заявок пользователя
-router.get('/user/:userId', async (req, res) => {
-  const applications = await Application.find({ userId: req.params.userId }).populate('jobId');
-  res.json(applications);
+// Получение заявки по ID
+router.get('/:id', async (req, res) => {
+    const application = await Application.findByPk(req.params.id);
+    if (!application) {
+        res.status(404).json({ message: 'Application not found' });
+    } else {
+        res.json(application);
+    }
+});
+
+// Обновление заявки
+router.put('/:id', async (req, res) => {
+    const application = await Application.findByPk(req.params.id);
+    if (!application) {
+        res.status(404).json({ message: 'Application not found' });
+    } else {
+        await application.update(req.body);
+        res.json(application);
+    }
+});
+
+// Удаление заявки
+router.delete('/:id', async (req, res) => {
+    const application = await Application.findByPk(req.params.id);
+    if (!application) {
+        res.status(404).json({ message: 'Application not found' });
+    } else {
+        await application.destroy();
+        res.json({ message: 'Application deleted' });
+    }
 });
 
 module.exports = router;

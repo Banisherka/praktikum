@@ -1,23 +1,16 @@
 const express = require('express');
-const Job = require('../internship-service/models/Job');
 const router = express.Router();
 
-// Получение всех вакансий
-router.get('/jobs', async (req, res) => {
-  const jobs = await Job.find();
-  res.json(jobs);
+// Пример маршрута для получения статистики
+router.get('/stats', async (req, res) => {
+    try {
+        // Здесь будет логика для получения статистики
+        res.json({ message: 'Admin statistics' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching statistics', error });
+    }
 });
 
-// Редактирование вакансии
-router.put('/jobs/:jobId', async (req, res) => {
-  const updatedJob = await Job.findByIdAndUpdate(req.params.jobId, req.body, { new: true });
-  res.json(updatedJob);
-});
-
-// Удаление вакансии
-router.delete('/jobs/:jobId', async (req, res) => {
-  await Job.findByIdAndDelete(req.params.jobId);
-  res.status(204).send();
-});
+// Другие маршруты для администрирования можно добавить здесь
 
 module.exports = router;

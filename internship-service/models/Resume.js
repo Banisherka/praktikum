@@ -1,9 +1,17 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const resumeSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User ', required: true },
-  filePath: { type: String, required: true }, // Путь к загруженному файлу
-  uploadedDate: { type: Date, default: Date.now },
+const Resume = sequelize.define('Resume', {
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+}, {
+    timestamps: true,
 });
 
-module.exports = mongoose.model('Resume', resumeSchema);
+module.exports = Resume;
